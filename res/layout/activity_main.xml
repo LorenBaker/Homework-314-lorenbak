@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:padding="4dp" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >
+
+		<TextView
+			android:id="@+id/tvSelectedLocation"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:background="@drawable/rectangle_black_stroke"
+			android:gravity="center"
+			android:padding="3dp"
+			android:text="Selected City, State and Zip Code"
+			android:visibility="visible" />
+
+		<EditText
+			android:id="@+id/txtZipCode"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:background="@drawable/rectangle_black_stroke"
+			android:hint="Enter 5-digit Zip Code or City"
+			android:paddingLeft="3dp"
+			android:visibility="gone" >
+		</EditText>
+
+		<ListView
+			android:id="@+id/lvCityStateZip"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:visibility="gone" >
+		</ListView>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/current_conditions_fragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="8"
+		android:orientation="vertical" >
+	</LinearLayout>
+
+	<fragment
+		android:id="@+id/forcast_fragment"
+		android:name="com.lbconsulting.homework_314_lorenbak.ui.ForecastFragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="10" />
+
+</LinearLayout>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/llCurrentConditions"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="left"
+		android:padding="3dp"
+		android:text="Current Conditions:"
+		android:textSize="18sp"
+		android:textStyle="bold"
+		android:visibility="visible" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="100dp"
+		android:orientation="horizontal" >
+
+		<ImageView
+			android:id="@+id/imageCurrentConditions"
+			android:layout_width="0dp"
+			android:layout_height="120dp"
+			android:layout_weight="1" />
+
+		<LinearLayout
+			android:layout_width="0dp"
+			android:layout_height="100dp"
+			android:layout_weight="1"
+			android:orientation="vertical" >
+
+			<TextView
+				android:id="@+id/tvCurrentTemp"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:gravity="center_vertical"
+				android:paddingLeft="2dp"
+				android:text="51 F"
+				android:textSize="18sp"
+				android:textStyle="bold"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/tvCurrentConditions"
+				android:layout_width="match_parent"
+				android:layout_height="17dp"
+				android:gravity="left"
+				android:padding="1dp"
+				android:text="Lt Rain"
+				android:textSize="12sp"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/tvCurrentHumidity"
+				android:layout_width="match_parent"
+				android:layout_height="17dp"
+				android:gravity="left"
+				android:padding="1dp"
+				android:text="Humidity 96%"
+				android:textSize="12sp"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/tvCurrentWindSpeed"
+				android:layout_width="match_parent"
+				android:layout_height="17dp"
+				android:gravity="left"
+				android:padding="1dp"
+				android:text="Wind Speed SE 5 MPH"
+				android:textSize="12sp"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/tvCurrentVisibility"
+				android:layout_width="match_parent"
+				android:layout_height="17dp"
+				android:gravity="left"
+				android:padding="1dp"
+				android:text="Visibility 8.00 mi"
+				android:textSize="12sp"
+				android:visibility="visible" />
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>
