@@ -6,12 +6,13 @@
 	android:orientation="vertical" >
 
 	<TextView
+		android:id="@+id/tvCurrentConditions"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="left"
 		android:padding="3dp"
-		android:text="Current Conditions:"
-		android:textSize="18sp"
+		android:text="Current Conditions: 51 F cloudy"
+		android:textSize="15sp"
 		android:textStyle="bold"
 		android:visibility="visible" />
 
@@ -24,64 +25,73 @@
 			android:id="@+id/imageCurrentConditions"
 			android:layout_width="0dp"
 			android:layout_height="120dp"
-			android:layout_weight="1" />
+			android:layout_weight="3" />
 
 		<LinearLayout
 			android:layout_width="0dp"
 			android:layout_height="100dp"
-			android:layout_weight="1"
+			android:layout_weight="5"
 			android:orientation="vertical" >
 
 			<TextView
-				android:id="@+id/tvCurrentTemp"
+				android:id="@+id/tvHumidity"
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:gravity="center_vertical"
 				android:paddingLeft="2dp"
-				android:text="51 F"
-				android:textSize="18sp"
-				android:textStyle="bold"
+				android:text="Humidity: 96%"
+				android:textSize="13sp"
 				android:visibility="visible" />
 
 			<TextView
-				android:id="@+id/tvCurrentConditions"
+				android:id="@+id/tvWindSpeed"
 				android:layout_width="match_parent"
 				android:layout_height="17dp"
 				android:gravity="left"
 				android:padding="1dp"
-				android:text="Lt Rain"
-				android:textSize="12sp"
+				android:text="Wind Speed: SE 5 MPH"
+				android:textSize="13sp"
 				android:visibility="visible" />
 
 			<TextView
-				android:id="@+id/tvCurrentHumidity"
+				android:id="@+id/tvBarometer"
 				android:layout_width="match_parent"
 				android:layout_height="17dp"
 				android:gravity="left"
 				android:padding="1dp"
-				android:text="Humidity 96%"
-				android:textSize="12sp"
+				android:text="Barometer: 30.1 in"
+				android:textSize="13sp"
 				android:visibility="visible" />
 
 			<TextView
-				android:id="@+id/tvCurrentWindSpeed"
+				android:id="@+id/tvVisibility"
 				android:layout_width="match_parent"
 				android:layout_height="17dp"
 				android:gravity="left"
 				android:padding="1dp"
-				android:text="Wind Speed SE 5 MPH"
-				android:textSize="12sp"
+				android:text="Visibility: 10.0 mi"
+				android:textSize="13sp"
 				android:visibility="visible" />
 
 			<TextView
-				android:id="@+id/tvCurrentVisibility"
+				android:id="@+id/tvLastUpdate"
 				android:layout_width="match_parent"
 				android:layout_height="17dp"
 				android:gravity="left"
 				android:padding="1dp"
-				android:text="Visibility 8.00 mi"
-				android:textSize="12sp"
+				android:text="Last Update on 06 May 12:53 pm PDT"
+				android:textSize="13sp"
+				android:visibility="visible" />
+
+			<TextView
+				android:id="@+id/tvLocation"
+				android:layout_width="match_parent"
+				android:layout_height="17dp"
+				android:gravity="left"
+				android:padding="1dp"
+				android:text="Seattle, Seattle Boeing Field (KBFI)"
+				android:textSize="13sp"
 				android:visibility="visible" />
 		</LinearLayout>
 	</LinearLayout>

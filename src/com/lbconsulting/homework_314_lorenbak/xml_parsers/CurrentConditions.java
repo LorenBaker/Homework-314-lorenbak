@@ -1,12 +1,18 @@
 package com.lbconsulting.homework_314_lorenbak.xml_parsers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import android.graphics.Bitmap;
 
 public class CurrentConditions {
 
 	public static final String TAG_CURRENT_OBSERVATION = "current_observation";
 	public static final String TAG_LOCATION = "location";
-	public static final String TAG_OBSERVATION_TIME = "observation_time";
+	public static final String TAG_OBSERVATION_TIME = "observation_time_rfc822";
 	public static final String TAG_WEATHER = "weather";
 	public static final String TAG_TEMP_F = "temp_f";
 	public static final String TAG_TEMP_C = "temp_c";
@@ -20,7 +26,7 @@ public class CurrentConditions {
 	public static final String TAG_ICON_URL_NAME = "icon_url_name";
 
 	private String location;
-	private String observation_time;
+	private Calendar observation_time;
 	private String weather;
 	private String temp_f;
 	private String temp_c;
@@ -48,11 +54,27 @@ public class CurrentConditions {
 	}
 
 	public String getObservation_time() {
-		return observation_time;
+		SimpleDateFormat format = new SimpleDateFormat("MMMM d, yyyy,  h:mm a",
+				java.util.Locale.getDefault());
+		String observationDate = format.format(observation_time.getTime());
+		return "Updated: " + observationDate;
 	}
 
 	public void setObservation_time(String observation_time) {
-		this.observation_time = observation_time;
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+		Date date = null;
+		Calendar cal = null;
+		try {
+			date = formatter.parse(observation_time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (date != null) {
+			cal = Calendar.getInstance();
+			cal.setTime(date);
+		}
+		this.observation_time = cal;
 	}
 
 	public String getWeather() {

@@ -3,11 +3,27 @@
 	tools:context="com.lbconsulting.homework_314_lorenbak.MainActivity" >
 
 	<item
+		android:id="@+id/action_refresh"
+		android:icon="@drawable/ic_action_refresh"
+		android:showAsAction="ifRoom"
+		android:title="Refresh">
+	</item>
+	<item
 		android:id="@+id/action_select_new_location"
 		android:icon="@drawable/ic_action_new"
 		android:showAsAction="ifRoom"
 		android:title="Select New Location"
 		android:titleCondensed="New">
+	</item>
+	<item
+		android:id="@+id/action_select_alternative_station"
+		android:showAsAction="never"
+		android:title="Alternative Weather Station">
+	</item>
+	<item
+		android:id="@+id/action_select_display_units"
+		android:showAsAction="never"
+		android:title="Display Units">
 	</item>
 
 </menu>

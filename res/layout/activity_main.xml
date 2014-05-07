@@ -27,6 +27,7 @@
 			android:layout_height="48dp"
 			android:background="@drawable/rectangle_black_stroke"
 			android:hint="Enter 5-digit Zip Code or City"
+			android:inputType="textVisiblePassword"
 			android:paddingLeft="3dp"
 			android:visibility="gone" >
 		</EditText>

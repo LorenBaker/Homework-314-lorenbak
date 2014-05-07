@@ -3,12 +3,16 @@ package com.lbconsulting.homework_314_lorenbak.ui;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,7 +22,7 @@ import com.lbconsulting.homework_314_lorenbak.R;
 import com.lbconsulting.homework_314_lorenbak.database.ZipCodesDatabaseHelper;
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String SHARED_PREFERENCES_NAME = "HW314_shared_preferences";
 
@@ -26,12 +30,12 @@ public class MainActivity extends Activity {
 	public static final int STATION_2 = 2;
 	public static final int STATION_3 = 3;
 	private static final String STATE_ACTIVE_STATION = "ActiveStation";
-	private int mActiveStation = STATION_1;
+	private int mActiveStation;
 
 	public static final int US_STANDARD_UNITS = 10;
 	public static final int METRIC_UNITS = 20;
 	public static final String STATE_ACTIVE_UNITS = "ActiveUnits";
-	private int mActiveUnits = US_STANDARD_UNITS;
+	private int mActiveUnits;
 
 	private static final String STARTING_ZIP_CODE = "98006";
 	public static final String STATE_ACTIVE_ZIP_CODE = "ActiveZipCode";
@@ -45,6 +49,10 @@ public class MainActivity extends Activity {
 
 	private static final String FRAGMENT_FORECAST = "frag_forecast";
 	private ForecastFragment mForecastFragment;
+
+	private int ZIPCODE_CITY_LOADER_ID = 1;
+	private android.app.LoaderManager mLoaderManager = null;
+	private LoaderManager.LoaderCallbacks<Cursor> mZipCodesCitiesCallbacks;
 
 	TextView tvSelectedLocation;
 	EditText txtZipCode;
@@ -69,7 +77,7 @@ public class MainActivity extends Activity {
 		} else {
 			SharedPreferences storedStates = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 			mActiveZipCode = storedStates.getString(STATE_ACTIVE_ZIP_CODE, STARTING_ZIP_CODE);
-			mActiveStation = storedStates.getInt(STATE_ACTIVE_STATION, STATION_1);
+			mActiveStation = storedStates.getInt(STATE_ACTIVE_STATION, STATION_2);
 			mActiveUnits = storedStates.getInt(STATE_ACTIVE_UNITS, US_STANDARD_UNITS);
 		}
 
@@ -100,11 +108,10 @@ public class MainActivity extends Activity {
 		StartCurrentConditionsFragment();
 		StartForecastFragment();
 
-		/*        if (savedInstanceState == null) {
-		            getFragmentManager().beginTransaction()
-		                    .add(R.id.container, new PlaceholderFragment())
-		                    .commit();
-		        }*/
+		mLoaderManager = getLoaderManager();
+		mZipCodesCitiesCallbacks = this;
+		mLoaderManager.initLoader(ZIPCODE_CITY_LOADER_ID, null, mZipCodesCitiesCallbacks);
+
 	}
 
 	private void StartCurrentConditionsFragment() {
@@ -177,13 +184,46 @@ public class MainActivity extends Activity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_select_new_location) {
+		switch (item.getItemId()) {
+			case R.id.action_select_new_location:
+				SelectNewZipCodeOrCity();
+				// Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
+				break;
 
-			Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
-			return true;
+			case R.id.action_refresh:
+				StartCurrentConditionsFragment();
+				StartForecastFragment();
+				// Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
+				break;
+
+			case R.id.action_select_alternative_station:
+				Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
+				break;
+
+			case R.id.action_select_display_units:
+				Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
+				break;
+
+			default:
+				break;
+
 		}
-		return super.onOptionsItemSelected(item);
+		return true;
+		// return super.onOptionsItemSelected(item);
+	}
+
+	private void SelectNewZipCodeOrCity() {
+		ShowTextEntryBoxAndList();
+
+	}
+
+	private void ShowTextEntryBoxAndList() {
+		txtZipCode.setVisibility(View.VISIBLE);
+		lvCityStateZip.setVisibility(View.VISIBLE);
+		getFragmentManager().beginTransaction()
+				.remove(mCurrentConditionsFragment)
+				.commit();
+
 	}
 
 	@Override
@@ -219,6 +259,26 @@ public class MainActivity extends Activity {
 		outState.putInt(STATE_ACTIVE_STATION, mActiveStation);
 		outState.putInt(STATE_ACTIVE_UNITS, mActiveUnits);
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		MyLog.i("Main_ACTIVITY", "onCreateLoader(): LoaderId = " + id);
+		CursorLoader cursorLoader = RSS_ItemsTable.getAllItems(getActivity(), mSelectedChannelID,
+				RSS_ItemsTable.SORT_ORDER_PUB_DATE);
+		return cursorLoader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

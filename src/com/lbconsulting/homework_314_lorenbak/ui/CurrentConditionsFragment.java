@@ -10,6 +10,9 @@ import java.net.URLConnection;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,15 +35,17 @@ public class CurrentConditionsFragment extends Fragment {
 	private int mDisplayUnits;
 
 	private ImageView imageCurrentConditions;
-	private TextView tvCurrentTemp;
 	private TextView tvCurrentConditions;
-	private TextView tvCurrentHumidity;
-	private TextView tvCurrentWindSpeed;
-	private TextView tvCurrentVisibility;
+	private TextView tvHumidity;
+	private TextView tvWindSpeed;
+	private TextView tvBarometer;
+	private TextView tvVisibility;
+	private TextView tvLastUpdate;
+	private TextView tvLocation;
 
 	private static DiskLruImageCache mDiskCache;
 	private static int DISK_CACHE_SIZE = 1024 * 1024 * 16; // 16mb in bytes
-	private static String DISK_CACH_DIRECTORY = "HW312_Images";
+	private static String DISK_CACH_DIRECTORY = "CurrentConditionsImages";
 
 	public CurrentConditionsFragment() {
 		// Empty constructor
@@ -86,11 +91,13 @@ public class CurrentConditionsFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_current_conditions, container, false);
 
 		imageCurrentConditions = (ImageView) view.findViewById(R.id.imageCurrentConditions);
-		tvCurrentTemp = (TextView) view.findViewById(R.id.tvCurrentTemp);
 		tvCurrentConditions = (TextView) view.findViewById(R.id.tvCurrentConditions);
-		tvCurrentHumidity = (TextView) view.findViewById(R.id.tvCurrentHumidity);
-		tvCurrentWindSpeed = (TextView) view.findViewById(R.id.tvCurrentWindSpeed);
-		tvCurrentVisibility = (TextView) view.findViewById(R.id.tvCurrentVisibility);
+		tvHumidity = (TextView) view.findViewById(R.id.tvHumidity);
+		tvWindSpeed = (TextView) view.findViewById(R.id.tvWindSpeed);
+		tvBarometer = (TextView) view.findViewById(R.id.tvBarometer);
+		tvVisibility = (TextView) view.findViewById(R.id.tvVisibility);
+		tvLastUpdate = (TextView) view.findViewById(R.id.tvLastUpdate);
+		tvLocation = (TextView) view.findViewById(R.id.tvLocation);
 
 		return view;
 	}
@@ -98,6 +105,9 @@ public class CurrentConditionsFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		MyLog.i("CurrentConditionsFragment", "onActivityCreated()");
+
+		mDiskCache = new DiskLruImageCache(getActivity(), DISK_CACH_DIRECTORY, DISK_CACHE_SIZE, CompressFormat.PNG, 80);
+
 		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
 		new LoadCurrentWeatherConditions().execute(args);
 
@@ -160,8 +170,41 @@ public class CurrentConditionsFragment extends Fragment {
 		}
 
 		private void getCurrentConditionsBitmap(CurrentConditions currentConditions) {
-			// TODO Auto-generated method stub
+			Bitmap currentConditionsBitmap = null;
+			String key = currentConditions.getIcon_url_name();
+			key = key.replace(".", "_");
 
+			if (mDiskCache.containsKey(key)) {
+				// load the image from storage
+				currentConditionsBitmap = mDiskCache.getBitmap(key);
+
+			} else {
+				// load the image from the web
+				currentConditionsBitmap = getImageFromWeb(currentConditions.getIcon_url());
+				if (currentConditionsBitmap != null) {
+					mDiskCache.put(key, currentConditionsBitmap);
+				}
+			}
+
+			currentConditions.setIcon(currentConditionsBitmap);
+
+		}
+
+		private Bitmap getImageFromWeb(String icon_url) {
+			Bitmap bitmapImage = null;
+			if (icon_url != null && !icon_url.isEmpty()) {
+				try {
+					InputStream is = (InputStream) new URL(icon_url).getContent();
+					bitmapImage = BitmapFactory.decodeStream(is);
+					if (is != null) {
+						is.close();
+					}
+
+				} catch (Exception e) {
+					MyLog.e("CurrentConditionsFragment", "ERROR in getImageFromWeb(): " + e.getMessage());
+				}
+			}
+			return bitmapImage;
 		}
 
 		private CurrentConditions DownloadCurrentWeatherConditions(String currentConditionsURL) {
@@ -202,18 +245,45 @@ public class CurrentConditionsFragment extends Fragment {
 			return currentConditions;
 		}
 
-		private void ShowCurentWeather(CurrentConditions currentConditions) {
-			// TODO Auto-generated method stub
-
-		}
-
 		@Override
 		protected void onPostExecute(CurrentConditions currentConditions) {
 			if (currentConditions != null) {
-				ShowCurentWeather(currentConditions);
+				ShowCurentWeather(currentConditions, activeUnits);
 			}
 			super.onPostExecute(currentConditions);
 		}
 
+		private void ShowCurentWeather(CurrentConditions currentConditions, int activeUnits) {
+			imageCurrentConditions.setImageBitmap(currentConditions.getIcon());
+			String conditions = "Current Conditions: ";
+			String humidity = "Humidity: " + currentConditions.getRelative_humidity() + "%";
+			String windSpeed = "Wind: " + currentConditions.getWind_string();
+			String barometer = "Barometer: ";
+			String visibility = "Visibility: " + currentConditions.getVisibility_mi() + " mi";
+
+			switch (activeUnits) {
+
+				case MainActivity.METRIC_UNITS:
+					conditions = conditions + currentConditions.getTemp_c() + (char) 0x00B0 + "C and "
+							+ currentConditions.getWeather();
+					barometer = barometer + currentConditions.getPressure_mb() + " mb";
+					break;
+				case MainActivity.US_STANDARD_UNITS:
+				default:
+					conditions = conditions + currentConditions.getTemp_f() + (char) 0x00B0 + "F and "
+							+ currentConditions.getWeather();
+					barometer = barometer + currentConditions.getPressure_in() + " in";
+					break;
+			}
+
+			tvCurrentConditions.setText(conditions);
+			tvHumidity.setText(humidity);
+			tvWindSpeed.setText(windSpeed);
+			tvBarometer.setText(barometer);
+			tvVisibility.setText(visibility);
+			tvLastUpdate.setText(currentConditions.getObservation_time());
+			tvLocation.setText(currentConditions.getLocation());
+
+		}
 	}
 }
