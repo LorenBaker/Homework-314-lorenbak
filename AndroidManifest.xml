@@ -25,6 +25,12 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<provider
+			android:name="com.lbconsulting.homework_314_lorenbak.database.ZipCodesContentProvider"
+			android:authorities="com.lbconsulting.homework_314_lorenbak"
+			android:exported="false" >
+		</provider>
 	</application>
 
 </manifest>

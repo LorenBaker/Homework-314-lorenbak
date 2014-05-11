@@ -9,7 +9,10 @@ import java.net.URLConnection;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -22,12 +25,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lbconsulting.homework_314_lorenbak.R;
+import com.lbconsulting.homework_314_lorenbak.R.drawable;
 import com.lbconsulting.homework_314_lorenbak.misc.DiskLruImageCache;
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions_Parser;
 
 public class CurrentConditionsFragment extends Fragment {
+
+	private CurrentCondtionsPostExecute mCurrentWeatherDownloadCompleteCallback;
+
+	// Container Activity must implement this interface
+	public interface CurrentCondtionsPostExecute {
+
+		public void onCurrentWeatherDownloadComplete(CurrentConditions currentConditions);
+	}
 
 	private static final String STATE_CURRENT_CONDITIONS_URL = "CurrentConditionsURL";
 
@@ -47,6 +59,8 @@ public class CurrentConditionsFragment extends Fragment {
 	private static int DISK_CACHE_SIZE = 1024 * 1024 * 16; // 16mb in bytes
 	private static String DISK_CACH_DIRECTORY = "CurrentConditionsImages";
 
+	private LoadCurrentWeatherConditions mLoadCurrentWeatherConditions = null;
+
 	public CurrentConditionsFragment() {
 		// Empty constructor
 	}
@@ -65,6 +79,19 @@ public class CurrentConditionsFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		MyLog.i("CurrentConditionsFragment", "onCreate()");
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try {
+			mCurrentWeatherDownloadCompleteCallback = (CurrentCondtionsPostExecute) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement onCurrentWeatherDownloadComplete callback");
+		}
+		super.onAttach(activity);
 	}
 
 	@Override
@@ -109,8 +136,7 @@ public class CurrentConditionsFragment extends Fragment {
 		mDiskCache = new DiskLruImageCache(getActivity(), DISK_CACH_DIRECTORY, DISK_CACHE_SIZE, CompressFormat.PNG, 80);
 
 		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
-		new LoadCurrentWeatherConditions().execute(args);
-
+		mLoadCurrentWeatherConditions = (LoadCurrentWeatherConditions) new LoadCurrentWeatherConditions().execute(args);
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -152,17 +178,19 @@ public class CurrentConditionsFragment extends Fragment {
 
 		@Override
 		protected void onPreExecute() {
-			// nothing to do
+			// do nothing
 		}
 
 		@Override
 		protected CurrentConditions doInBackground(String... params) {
+			MyLog.i("CurrentConditionsFragment", "doInBackground(): Loading current weather conditions.");
 			String currentConditionsURL = params[0];
 			String activeUnitsString = params[1];
 			activeUnits = Integer.parseInt(activeUnitsString);
 
 			CurrentConditions currentConditions = DownloadCurrentWeatherConditions(currentConditionsURL);
-			if (currentConditions != null && !currentConditions.getIcon_url_name().isEmpty()) {
+			if (currentConditions != null && currentConditions.getIcon_url_name() != null
+					&& !currentConditions.getIcon_url_name().isEmpty()) {
 				getCurrentConditionsBitmap(currentConditions);
 			}
 
@@ -218,10 +246,16 @@ public class CurrentConditionsFragment extends Fragment {
 					HttpURLConnection httpURLConnection = (HttpURLConnection) connection;
 
 					int responseCode = httpURLConnection.getResponseCode();
+					MyLog.i("CurrentConditionsFragment",
+							"DownloadCurrentWeatherConditions(): httpURLConnection responseCode:" + responseCode);
 					if (responseCode == HttpURLConnection.HTTP_OK) {
 						// Get the current conditions input stream
+						MyLog.i("CurrentConditionsFragment",
+								"DownloadCurrentWeatherConditions(): getting current weather conditions");
 						InputStream currentConditionsFeedStream = httpURLConnection.getInputStream();
 						// Parse the input steam and save data to a CurrentConditions object
+						MyLog.i("CurrentConditionsFragment",
+								"DownloadCurrentWeatherConditions(): parsing current weather conditions");
 						currentConditions = CurrentConditions_Parser.parse(currentConditionsFeedStream);
 						currentConditionsFeedStream.close();
 					}
@@ -234,6 +268,7 @@ public class CurrentConditionsFragment extends Fragment {
 					MyLog.e("CurrentConditionsFragment",
 							"DownloadCurrentWeatherConditions(): IOException opening news feed: "
 									+ currentConditionsURL + ". " + e.getMessage());
+
 				} catch (XmlPullParserException e) {
 					MyLog.e("CurrentConditionsFragment",
 							"DownloadCurrentWeatherConditions(): XmlPullParserException opening news feed: "
@@ -247,8 +282,23 @@ public class CurrentConditionsFragment extends Fragment {
 
 		@Override
 		protected void onPostExecute(CurrentConditions currentConditions) {
+			MyLog.i("CurrentConditionsFragment", "onPostExecute(): Loading current weather conditions FINISHED.");
 			if (currentConditions != null) {
 				ShowCurentWeather(currentConditions, activeUnits);
+				mCurrentWeatherDownloadCompleteCallback.onCurrentWeatherDownloadComplete(currentConditions);
+			} else {
+				new AlertDialog.Builder(getActivity())
+						.setTitle("Failed to get current weather.")
+						.setMessage(
+								"Did not get a response from the weather.gov website.  Please try again latter.")
+						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog, int which) {
+
+							}
+						})
+						.setIcon(drawable.ic_action_warning)
+						.show();
 			}
 			super.onPostExecute(currentConditions);
 		}
@@ -285,5 +335,15 @@ public class CurrentConditionsFragment extends Fragment {
 			tvLocation.setText(currentConditions.getLocation());
 
 		}
+	}
+
+	public AsyncTask.Status getLoadingCurrentWeatherConditionsStatus() {
+
+		AsyncTask.Status status = null;
+		if (mLoadCurrentWeatherConditions != null) {
+			status = mLoadCurrentWeatherConditions.getStatus();
+		}
+
+		return status;
 	}
 }

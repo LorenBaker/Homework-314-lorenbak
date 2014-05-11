@@ -6,12 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 
@@ -21,14 +19,6 @@ public class ZipCodesDatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "zipcodes.db";
 	// private static String DATABASE_PATH = "";
 	private static String DATABASE_PATH = "/data/data/com.lbconsulting.homework_314_lorenbak/databases/";
-
-	public static String ZIP_CODES_TABLE = "zipcodes_with_stations";
-	public static String COL_ZIP_CODE = "ZipCode";
-	public static String COL_STATION_1_XML_URL = "station1_xml_url";
-	public static String COL_STATION_2_XML_URL = "station2_xml_url";
-	public static String COL_STATION_3_XML_URL = "station3_xml_url";
-	public static String COL_LOCATION = "Location";
-	public static String COL_ID = "_id";
 
 	private final Context myContext;
 
@@ -135,89 +125,17 @@ public class ZipCodesDatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		MyLog.i("ZipCodesDatabaseHelper", "onCreate");
-
+		// Do nothing
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
 		MyLog.i("ZipCodesDatabaseHelper", "onUpgrade");
-
+		// Do nothing
 	}
 
 	public static SQLiteDatabase getDatabase() {
 		return zipcodes_dBase;
-	}
-
-	@SuppressWarnings("resource")
-	public Cursor getZipCode(String zipCode) {
-		Cursor zipCodeCursor = null;
-
-		String[] projection = new String[] { "*" };
-		String selection = COL_ZIP_CODE + " = " + zipCode;
-		String[] selectionArgs = null;
-		String sortOrder = null;
-		String groupBy = null;
-		String having = null;
-
-		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(ZIP_CODES_TABLE);
-		queryBuilder.appendWhere(selection);
-
-		// Execute the query on the database
-		SQLiteDatabase db = null;
-		try {
-			db = getReadableDatabase();
-		} catch (SQLiteException ex) {
-			MyLog.e("ZipCodesDatabaseHelper", "SQLiteException error in getZipCode:" + zipCode);
-		}
-
-		if (null != db) {
-
-			try {
-				zipCodeCursor = queryBuilder
-						.query(db, projection, selection, selectionArgs, groupBy, having, sortOrder);
-			} catch (Exception e) {
-				MyLog.e("ZipCodesDatabaseHelper", "Exception error in getZipCode:" + zipCode);
-				e.printStackTrace();
-			}
-		}
-		return zipCodeCursor;
-	}
-
-	@SuppressWarnings("resource")
-	public Cursor getZipCode(long zipCodeID) {
-		Cursor zipCodeCursor = null;
-
-		String[] projection = new String[] { "*" };
-		String selection = COL_ID + " = " + zipCodeID;
-		String[] selectionArgs = null;
-		String sortOrder = null;
-		String groupBy = null;
-		String having = null;
-
-		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(ZIP_CODES_TABLE);
-		queryBuilder.appendWhere(selection);
-
-		// Execute the query on the database
-		SQLiteDatabase db = null;
-		try {
-			db = getReadableDatabase();
-		} catch (SQLiteException ex) {
-			MyLog.e("ZipCodesDatabaseHelper", "SQLiteException error in getZipCode:" + zipCodeID);
-		}
-
-		if (null != db) {
-
-			try {
-				zipCodeCursor = queryBuilder
-						.query(db, projection, selection, selectionArgs, groupBy, having, sortOrder);
-			} catch (Exception e) {
-				MyLog.e("ZipCodesDatabaseHelper", "Exception error in getZipCode:" + zipCodeID);
-				e.printStackTrace();
-			}
-		}
-		return zipCodeCursor;
 	}
 
 }

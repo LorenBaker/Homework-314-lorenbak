@@ -22,7 +22,7 @@
 			android:visibility="visible" />
 
 		<EditText
-			android:id="@+id/txtZipCode"
+			android:id="@+id/txtZipCity"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:background="@drawable/rectangle_black_stroke"
@@ -33,7 +33,7 @@
 		</EditText>
 
 		<ListView
-			android:id="@+id/lvCityStateZip"
+			android:id="@+id/lvZipCity"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
@@ -55,5 +55,14 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="10" />
+
+	<com.lbconsulting.homework_314_lorenbak.misc.TextProgressBar
+		android:id="@+id/pbLoadingIndicator"
+		android:layout_width="150dp"
+		android:layout_height="150dp"
+		android:layout_gravity="center"
+		android:indeterminateOnly="true"
+		android:keepScreenOn="true"
+		android:visibility="gone" />
 
 </LinearLayout>
