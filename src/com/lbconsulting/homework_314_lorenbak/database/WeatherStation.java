@@ -4,7 +4,8 @@ import com.lbconsulting.homework_314_lorenbak.ui.MainActivity;
 
 public class WeatherStation {
 
-	private int stationPosition;
+	// private long zipCodeID;
+	private int stationNumber;
 	private String stationID;
 	private String stationName;
 	private Float stationDistance_mi;
@@ -15,12 +16,20 @@ public class WeatherStation {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getStationPosition() {
-		return stationPosition;
+	/*	public long getZipCodeID() {
+			return zipCodeID;
+		}
+
+		public void setZipCodeID(long zipCodeID) {
+			this.zipCodeID = zipCodeID;
+		}
+	*/
+	public int getStationNumber() {
+		return stationNumber;
 	}
 
-	public void setStationPosition(int stationPosition) {
-		this.stationPosition = stationPosition;
+	public void setStationNumber(int stationNumber) {
+		this.stationNumber = stationNumber;
 	}
 
 	public String getStationID() {

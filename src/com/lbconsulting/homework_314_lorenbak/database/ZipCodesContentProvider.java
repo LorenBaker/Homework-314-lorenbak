@@ -216,7 +216,10 @@ public class ZipCodesContentProvider extends ContentProvider {
 			default:
 				throw new IllegalArgumentException("Method update: Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		// The only field updated in this app is active_station_number.
+		// There is no need to refresh the loader when this field changes.
+		// getContext().getContentResolver().notifyChange(uri, null);
+
 		return updateCount;
 	}
 

@@ -27,7 +27,7 @@ public class SelectStationArrayAdaptor extends ArrayAdapter<WeatherStation> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		WeatherStation weatherStation = data[position];
+		WeatherStation weatherStation = getWeatherStation(position);
 		View row = convertView;
 
 		if (row == null)
@@ -38,9 +38,13 @@ public class SelectStationArrayAdaptor extends ArrayAdapter<WeatherStation> {
 
 		TextView tvSelectStation = (TextView) row.findViewById(R.id.tvSelectStation);
 		tvSelectStation.setText(weatherStation.toString());
-		tvSelectStation.setTag(weatherStation.getStationPosition());
+		// tvSelectStation.setTag(weatherStation.getStationPosition());
 
 		return row;
+	}
+
+	public WeatherStation getWeatherStation(int position) {
+		return data[position];
 	}
 
 }

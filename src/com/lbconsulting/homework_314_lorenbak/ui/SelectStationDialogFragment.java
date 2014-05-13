@@ -22,11 +22,22 @@ import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 
 public class SelectStationDialogFragment extends DialogFragment {
 
+	private SelectWeatherStation mSelectWeatherStationCallback;
+
+	// Container Activity must implement this interface
+	public interface SelectWeatherStation {
+
+		public void onWeatherSationChange(int stationNumber);
+	}
+
 	// private Button btnApply;
 	private Button btnCancel;
 	private ListView select_station_listview;
 	private String zipCode;
+	private long zipCodeID;
 	private int active_units;
+
+	private SelectStationArrayAdaptor mSelectStationArrayAdaptor;
 
 	public SelectStationDialogFragment() {
 		// Empty constructor required for DialogFragment
@@ -45,6 +56,14 @@ public class SelectStationDialogFragment extends DialogFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		MyLog.i("SelectStationDialogFragment", "onAttach");
+		// This makes sure that the container activity has implemented
+		// the callback interface. If not, it throws an exception
+		try {
+			mSelectWeatherStationCallback = (SelectWeatherStation) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement onWeatherSationChange callback");
+		}
 		super.onAttach(activity);
 	}
 
@@ -73,11 +92,13 @@ public class SelectStationDialogFragment extends DialogFragment {
 		Cursor zipCodesCursor = ZipCodesTable.getZipCode(getActivity(), zipCode);
 		if (zipCodesCursor != null) {
 			zipCodesCursor.moveToFirst();
+			zipCodeID = zipCodesCursor.getLong(zipCodesCursor.getColumnIndexOrThrow(ZipCodesTable.COL_ID));
 
 			WeatherStation[] stationsList = new WeatherStation[3];
 
 			// Station 1
 			WeatherStation station = new WeatherStation();
+			// station.setZipCodeID(zipCodeID);
 			station.setActive_units(active_units);
 
 			float distanceKm = zipCodesCursor.getFloat(zipCodesCursor
@@ -95,11 +116,12 @@ public class SelectStationDialogFragment extends DialogFragment {
 					.getColumnIndexOrThrow(ZipCodesTable.COL_STATION_1_NAME));
 			station.setStationName(stationName);
 
-			station.setStationPosition(1);
+			station.setStationNumber(1);
 			stationsList[0] = station;
 
 			// Station 2
 			station = new WeatherStation();
+			// station.setZipCodeID(zipCodeID);
 			station.setActive_units(active_units);
 
 			distanceKm = zipCodesCursor.getFloat(zipCodesCursor
@@ -116,11 +138,12 @@ public class SelectStationDialogFragment extends DialogFragment {
 					.getColumnIndexOrThrow(ZipCodesTable.COL_STATION_2_NAME));
 			station.setStationName(stationName);
 
-			station.setStationPosition(2);
+			station.setStationNumber(2);
 			stationsList[1] = station;
 
 			// Station 3
 			station = new WeatherStation();
+			// station.setZipCodeID(zipCodeID);
 			station.setActive_units(active_units);
 
 			distanceKm = zipCodesCursor.getFloat(zipCodesCursor
@@ -137,7 +160,7 @@ public class SelectStationDialogFragment extends DialogFragment {
 					.getColumnIndexOrThrow(ZipCodesTable.COL_STATION_3_NAME));
 			station.setStationName(stationName);
 
-			station.setStationPosition(3);
+			station.setStationNumber(3);
 			stationsList[2] = station;
 
 			zipCodesCursor.close();
@@ -148,15 +171,6 @@ public class SelectStationDialogFragment extends DialogFragment {
 			view = inflater.inflate(R.layout.dialog_select_station, container);
 
 			if (view != null) {
-				/*				btnApply = (Button) view.findViewById(R.id.btnApply);
-								btnApply.setOnClickListener(new OnClickListener() {
-
-									@Override
-									public void onClick(View v) {
-
-										getDialog().dismiss();
-									}
-								});*/
 
 				btnCancel = (Button) view.findViewById(R.id.btnCancel);
 				btnCancel.setOnClickListener(new OnClickListener() {
@@ -172,15 +186,19 @@ public class SelectStationDialogFragment extends DialogFragment {
 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View listView, int position, long id) {
-						// TODO Auto-generated method stub
-
+						// update the database with the new station number
+						WeatherStation weatherStation = mSelectStationArrayAdaptor.getWeatherStation(position);
+						int stationNumber = weatherStation.getStationNumber();
+						ZipCodesTable.setActiveStationNumber(getActivity(), zipCodeID, stationNumber);
+						mSelectWeatherStationCallback.onWeatherSationChange(stationNumber);
+						getDialog().dismiss();
 					}
 
 				});
 
-				SelectStationArrayAdaptor selectStationArrayAdaptor = new SelectStationArrayAdaptor(getActivity(),
+				mSelectStationArrayAdaptor = new SelectStationArrayAdaptor(getActivity(),
 						R.layout.row_select_station, stationsList);
-				select_station_listview.setAdapter(selectStationArrayAdaptor);
+				select_station_listview.setAdapter(mSelectStationArrayAdaptor);
 			}
 		}
 		return view;

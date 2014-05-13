@@ -106,24 +106,6 @@ public class ZipCodesTable {
 
 	}
 
-	/*	public static Cursor getZipCities(Context context, String zipCityText) {
-			Uri uri = CONTENT_URI;
-			String[] projection = PROJECTION_LOCATION;
-			String selection =  COL_LOCATION + " Like '" + zipCityText + "%'";
-			String selectionArgs[] = null;
-			String sortOrder = SORT_ORDER_LOCATION;
-
-			ContentResolver cr = context.getContentResolver();
-			Cursor cursor = null;
-			try {
-				cursor = cr.query(uri, projection, selection, selectionArgs, sortOrder);
-			} catch (Exception e) {
-				MyLog.e("ZipCodesTable", "Exception error in getZipCities:");
-				e.printStackTrace();
-			}
-			return cursor;
-		}*/
-
 	public static CursorLoader getZipCityList(Context context, String zipCityText) {
 
 		CursorLoader cursorLoader = null;

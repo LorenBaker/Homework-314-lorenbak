@@ -134,9 +134,9 @@ public class CurrentConditionsFragment extends Fragment {
 		MyLog.i("CurrentConditionsFragment", "onActivityCreated()");
 
 		mDiskCache = new DiskLruImageCache(getActivity(), DISK_CACH_DIRECTORY, DISK_CACHE_SIZE, CompressFormat.PNG, 80);
-
-		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
-		mLoadCurrentWeatherConditions = (LoadCurrentWeatherConditions) new LoadCurrentWeatherConditions().execute(args);
+		// TODO: resume Current weather feed
+		/*		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
+				mLoadCurrentWeatherConditions = (LoadCurrentWeatherConditions) new LoadCurrentWeatherConditions().execute(args);*/
 		super.onActivityCreated(savedInstanceState);
 	}
 

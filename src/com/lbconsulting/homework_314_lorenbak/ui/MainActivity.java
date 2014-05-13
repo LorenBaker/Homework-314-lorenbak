@@ -30,9 +30,12 @@ import com.lbconsulting.homework_314_lorenbak.database.ZipCodesTable;
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 import com.lbconsulting.homework_314_lorenbak.misc.TextProgressBar;
 import com.lbconsulting.homework_314_lorenbak.ui.CurrentConditionsFragment.CurrentCondtionsPostExecute;
+import com.lbconsulting.homework_314_lorenbak.ui.ForecastFragment.ForecastWeatherPostExecute;
+import com.lbconsulting.homework_314_lorenbak.ui.SelectStationDialogFragment.SelectWeatherStation;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions;
 
-public class MainActivity extends Activity implements CurrentCondtionsPostExecute,
+public class MainActivity extends Activity implements CurrentCondtionsPostExecute, ForecastWeatherPostExecute,
+		SelectWeatherStation,
 		LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String SHARED_PREFERENCES_NAME = "HW314_shared_preferences";
@@ -48,7 +51,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	public static final String STATE_ACTIVE_UNITS = "ActiveUnits";
 	private int mActiveUnits;
 
-	private static final String STARTING_ZIP_CODE = "98006";
+	private static final String STARTING_ZIP_CODE = "98103";
 	public static final String STATE_ACTIVE_ZIP_CODE = "ActiveZipCode";
 	private String mActiveZipCode = STARTING_ZIP_CODE;
 
@@ -67,6 +70,9 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	private int ZIPCODE_CITY_LOADER_ID = 1;
 	private android.app.LoaderManager mLoaderManager = null;
 	private LoaderManager.LoaderCallbacks<Cursor> mZipCodesCitiesCallbacks;
+
+	private boolean currentConditionsLoadingComplete = true;
+	private boolean forecastLoadingComplete = true;
 
 	TextView tvSelectedLocation;
 	EditText txtZipCity;
@@ -156,7 +162,8 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 				refreshZipCodesCursor(zipCodeID);
 				InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				mgr.hideSoftInputFromWindow(txtZipCity.getWindowToken(), 0);
-				StartFragments();
+				StartCurrentConditionsFragment();
+				StartForecastFragment();
 			}
 		}
 				);
@@ -176,6 +183,9 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	}
 
 	private void StartCurrentConditionsFragment() {
+		currentConditionsLoadingComplete = false;
+		HideTextEntryBoxAndList();
+		ShowLoadingIndicator();
 		if (mCurrentConditionsFragment != null) {
 			AsyncTask.Status status = mCurrentConditionsFragment.getLoadingCurrentWeatherConditionsStatus();
 			if (status == AsyncTask.Status.FINISHED) {
@@ -202,13 +212,51 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	}
 
 	private void StartForecastFragment() {
-		// TODO Auto-generated method stub
+		forecastLoadingComplete = false;
+		ReplaceForecastFragment();
+		// HideTextEntryBoxAndList();
+		// ShowLoadingIndicator();
+		/*		if (mForecastFragment != null) {
+					AsyncTask.Status status = mCurrentConditionsFragment.getLoadingCurrentWeatherConditionsStatus();
+					if (status == AsyncTask.Status.FINISHED) {
+						ReplaceCurrentConditonsFragment();
+					}
+				} else {
+					ReplaceCurrentConditonsFragment();
+				}*/
 
 	}
 
 	private void ReplaceForecastFragment() {
-		// TODO Auto-generated method stub
+		String weatherForecastURL = getWeatherForecastURL();
+		mForecastFragment = ForecastFragment.newInstance(weatherForecastURL, mActiveUnits);
 
+		getFragmentManager().beginTransaction()
+				.replace(R.id.forcast_fragment, mForecastFragment, FRAGMENT_FORECAST)
+				.commit();
+
+	}
+
+	private String getWeatherForecastURL() {
+		String urlPart1 = "http://graphical.weather.gov/xml/SOAP_server/ndfdXMLclient.php?whichClient=NDFDgenMultiZipCode&lat=&lon=&listLatLon=&lat1=&lon1=&lat2=&lon2=&resolutionSub=&listLat1=&listLon1=&listLat2=&listLon2=&resolutionList=&endPoint1Lat=&endPoint1Lon=&endPoint2Lat=&endPoint2Lon=&listEndPoint1Lat=&listEndPoint1Lon=&listEndPoint2Lat=&listEndPoint2Lon=&zipCodeList=";
+		String urlPart2 = "&listZipCodeList=&centerPointLat=&centerPointLon=&distanceLat=&distanceLon=&resolutionSquare=&listCenterPointLat=&listCenterPointLon=&listDistanceLat=&listDistanceLon=&listResolutionSquare=&citiesLevel=&listCitiesLevel=&sector=&gmlListLatLon=&featureType=&requestedTime=&startTime=&endTime=&compType=&propertyName=&product=glance&begin=2004-01-01T00%3A00%3A00&end=2018-05-12T00%3A00%3A00&Unit=";
+		String urlPart3 = "&maxt=maxt&mint=mint&wx=wx&Submit=Submit";
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(urlPart1);
+		sb.append(mActiveZipCode);
+		sb.append(urlPart2);
+		switch (mActiveUnits) {
+			case METRIC_UNITS:
+				sb.append("m");
+				break;
+			default:
+				sb.append("e");
+				break;
+		}
+
+		sb.append(urlPart3);
+		return sb.toString();
 	}
 
 	private void RemoveForecastFragment() {
@@ -308,7 +356,8 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 				break;
 
 			case R.id.action_refresh:
-				StartFragments();
+				StartCurrentConditionsFragment();
+				StartForecastFragment();
 				// Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
 				break;
 
@@ -326,17 +375,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 		}
 		return true;
-	}
-
-	private void StartFragments() {
-		HideTextEntryBoxAndList();
-
-		// RemoveCurrentConditonsFragment();
-		// RemoveForecastFragment();
-		ShowLoadingIndicator();
-
-		StartCurrentConditionsFragment();
-		StartForecastFragment();
 	}
 
 	private void SelectAlternativeStation() {
@@ -417,7 +455,8 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	@Override
 	protected void onResume() {
-		StartFragments();
+		StartCurrentConditionsFragment();
+		StartForecastFragment();
 		super.onResume();
 	}
 
@@ -454,7 +493,22 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	@Override
 	public void onCurrentWeatherDownloadComplete(CurrentConditions currentConditions) {
-		DismissLoadingIndicator();
+		currentConditionsLoadingComplete = true;
+		if (forecastLoadingComplete) {
+			DismissLoadingIndicator();
+		}
+	}
+
+	@Override
+	public void onWeatherSationChange(int stationNumber) {
+		mActiveStation = stationNumber;
+		StartCurrentConditionsFragment();
+	}
+
+	@Override
+	public void onForecastWeatherDownloadComplete(ForecastWeatherPostExecute currentConditions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
