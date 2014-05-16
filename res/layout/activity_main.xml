@@ -3,8 +3,9 @@
 	android:id="@+id/container"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="@drawable/rectangle_green_gradient_black_stroke"
 	android:orientation="vertical"
-	android:padding="4dp" >
+	android:padding="0dp" >
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -18,7 +19,6 @@
 			android:background="@drawable/rectangle_green_gradient_black_stroke"
 			android:gravity="center"
 			android:padding="3dp"
-			android:text="Selected City, State and Zip Code"
 			android:textColor="@color/white"
 			android:textSize="17sp"
 			android:textStyle="bold"
@@ -29,7 +29,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:background="@drawable/rectangle_black_stroke"
-			android:hint="Enter 5-digit Zip Code or City Name"
+			android:hint="@string/txt_zip_city_hint"
 			android:inputType="textCapWords"
 			android:paddingLeft="3dp"
 			android:visibility="gone" >
@@ -48,7 +48,8 @@
 		android:id="@+id/current_conditions_fragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="8"
+		android:layout_weight="7"
+		android:background="@drawable/rectangle_green_gradient_black_stroke"
 		android:orientation="vertical" >
 	</LinearLayout>
 
@@ -56,7 +57,8 @@
 		android:id="@+id/forcast_fragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="10"
+		android:layout_weight="13"
+		android:background="@drawable/rectangle_green_gradient_black_stroke"
 		android:orientation="vertical" >
 	</LinearLayout>
 

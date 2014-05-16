@@ -1,5 +1,6 @@
 package com.lbconsulting.homework_314_lorenbak.xml_parsers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WeatherForecast {
@@ -18,7 +19,8 @@ public class WeatherForecast {
 	private String latitude;
 	private String longitude;
 	private String moreWeatherInformationLink;
-	private HashMap<String, TimeLayout> timeLayouts = new HashMap<String, TimeLayout>();
+	private ArrayList<TimeLayout> timeLayouts = new ArrayList<TimeLayout>();
+	// private HashMap<String, TimeLayout> timeLayouts = new HashMap<String, TimeLayout>();
 	private HashMap<String, Temperatures> temperatures = new HashMap<String, Temperatures>();
 	private Weather weather;
 	private ConditionIcons conditionIcons;
@@ -51,11 +53,11 @@ public class WeatherForecast {
 		this.moreWeatherInformationLink = moreWeatherInformationLink;
 	}
 
-	public TimeLayout getTimeLayout(String key) {
-		return timeLayouts.get(key);
+	public TimeLayout getTimeLayout(int index) {
+		return timeLayouts.get(index);
 	}
 
-	public HashMap<String, TimeLayout> getTimeLayouts() {
+	public ArrayList<TimeLayout> getTimeLayouts() {
 		return timeLayouts;
 	}
 

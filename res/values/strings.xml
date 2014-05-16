@@ -2,9 +2,13 @@
 <resources>
 
 	<string name="app_name">HW314-lorenbak</string>
-	<string name="hello_world">Hello world!</string>
-	<string name="action_settings">Settings</string>
 	<string name="btn_cancel_text">Cancel</string>
-	<string name="btn_apply_text">Apply</string>
+	<string name="forecast_text">3-Day Forecast:</string>
+	<string name="image_current_conditions_content_description">Current Weather Conditions</string>
+	<string name="image_weather_content_description">Forecast Icon</string>
+	<string name="txt_zip_city_hint">Enter 5-digit Zip Code or City Name</string>
+	<string name="action_refresh_text">Refresh</string>
+	<string name="action_select_new_location_text">Select New Location</string>
+	<string name="action_select_alternative_station_text">Alternative Weather Station</string>
 
 </resources>

@@ -13,6 +13,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.net.Uri;
+
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
 
 public class WeatherForecast_Parser {
@@ -193,7 +195,7 @@ public class WeatherForecast_Parser {
 		}
 
 		if (timeLayout != null) {
-			weatherForecast.getTimeLayouts().put(timeLayout.getLayout_key(), timeLayout);
+			weatherForecast.getTimeLayouts().add(timeLayout);
 		}
 	}
 
@@ -363,6 +365,11 @@ public class WeatherForecast_Parser {
 			if (name.equals(ConditionIcons.TAG_ICON_LINK)) {
 				String iconLink = readText(parser);
 				conditionIcons.getIconLinks().add(iconLink);
+
+				Uri iconUri = Uri.parse(iconLink);
+				String icon = iconUri.getLastPathSegment();
+				icon = icon.replace(".", "_");
+				conditionIcons.getIcons().add(icon);
 
 			} else {
 				skip(parser);

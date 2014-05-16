@@ -13,11 +13,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.lbconsulting.homework_314_lorenbak.R;
 import com.lbconsulting.homework_314_lorenbak.R.drawable;
 import com.lbconsulting.homework_314_lorenbak.misc.DiskLruImageCache;
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
+import com.lbconsulting.homework_314_lorenbak.misc.SettingsFragment;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions_Parser;
 
@@ -65,12 +68,12 @@ public class CurrentConditionsFragment extends Fragment {
 		// Empty constructor
 	}
 
-	public static CurrentConditionsFragment newInstance(String currentConditionsURL, int displayUnits) {
+	public static CurrentConditionsFragment newInstance(String currentConditionsURL) {
 		CurrentConditionsFragment f = new CurrentConditionsFragment();
 		// Supply activeChannelID input as an argument.
 		Bundle args = new Bundle();
 		args.putString(STATE_CURRENT_CONDITIONS_URL, currentConditionsURL);
-		args.putInt(MainActivity.STATE_ACTIVE_UNITS, displayUnits);
+		// args.putInt(MainActivity.STATE_ACTIVE_UNITS, displayUnits);
 		f.setArguments(args);
 		return f;
 	}
@@ -103,17 +106,20 @@ public class CurrentConditionsFragment extends Fragment {
 				mCurrentConditionsURL = savedInstanceState.getString(STATE_CURRENT_CONDITIONS_URL);
 			}
 
-			if (savedInstanceState.containsKey(MainActivity.STATE_ACTIVE_UNITS)) {
-				mDisplayUnits = savedInstanceState.getInt(MainActivity.STATE_ACTIVE_UNITS);
-			}
+			/*			if (savedInstanceState.containsKey(MainActivity.STATE_ACTIVE_UNITS)) {
+							mDisplayUnits = savedInstanceState.getInt(MainActivity.STATE_ACTIVE_UNITS);
+						}*/
 
 		} else {
 			Bundle bundle = getArguments();
 			if (bundle != null) {
 				mCurrentConditionsURL = bundle.getString(STATE_CURRENT_CONDITIONS_URL);
-				mDisplayUnits = bundle.getInt(MainActivity.STATE_ACTIVE_UNITS, MainActivity.US_STANDARD_UNITS);
+				// mDisplayUnits = bundle.getInt(MainActivity.STATE_ACTIVE_UNITS, MainActivity.US_STANDARD_UNITS);
 			}
 		}
+
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		mDisplayUnits = Integer.parseInt(sharedPref.getString(SettingsFragment.KEY_DISPLAY_UNITS, ""));
 
 		View view = inflater.inflate(R.layout.fragment_current_conditions, container, false);
 
@@ -134,9 +140,8 @@ public class CurrentConditionsFragment extends Fragment {
 		MyLog.i("CurrentConditionsFragment", "onActivityCreated()");
 
 		mDiskCache = new DiskLruImageCache(getActivity(), DISK_CACH_DIRECTORY, DISK_CACHE_SIZE, CompressFormat.PNG, 80);
-		// TODO: resume Current weather feed
-		/*		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
-				mLoadCurrentWeatherConditions = (LoadCurrentWeatherConditions) new LoadCurrentWeatherConditions().execute(args);*/
+		String[] args = new String[] { mCurrentConditionsURL, String.valueOf(mDisplayUnits) };
+		mLoadCurrentWeatherConditions = (LoadCurrentWeatherConditions) new LoadCurrentWeatherConditions().execute(args);
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -162,7 +167,7 @@ public class CurrentConditionsFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		MyLog.i("CurrentConditionsFragment", "onSaveInstanceState()");
 		outState.putString(STATE_CURRENT_CONDITIONS_URL, mCurrentConditionsURL);
-		outState.putInt(MainActivity.STATE_ACTIVE_UNITS, mDisplayUnits);
+		// outState.putInt(MainActivity.STATE_ACTIVE_UNITS, mDisplayUnits);
 		super.onSaveInstanceState(outState);
 	}
 

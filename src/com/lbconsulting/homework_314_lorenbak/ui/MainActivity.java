@@ -6,11 +6,13 @@ import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -23,20 +25,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lbconsulting.homework_314_lorenbak.R;
 import com.lbconsulting.homework_314_lorenbak.database.ZipCodesTable;
 import com.lbconsulting.homework_314_lorenbak.misc.MyLog;
+import com.lbconsulting.homework_314_lorenbak.misc.SettingsFragment;
 import com.lbconsulting.homework_314_lorenbak.misc.TextProgressBar;
 import com.lbconsulting.homework_314_lorenbak.ui.CurrentConditionsFragment.CurrentCondtionsPostExecute;
 import com.lbconsulting.homework_314_lorenbak.ui.ForecastFragment.ForecastWeatherPostExecute;
 import com.lbconsulting.homework_314_lorenbak.ui.SelectStationDialogFragment.SelectWeatherStation;
 import com.lbconsulting.homework_314_lorenbak.xml_parsers.CurrentConditions;
+import com.lbconsulting.homework_314_lorenbak.xml_parsers.WeatherForecast;
 
 public class MainActivity extends Activity implements CurrentCondtionsPostExecute, ForecastWeatherPostExecute,
-		SelectWeatherStation,
-		LoaderManager.LoaderCallbacks<Cursor> {
+		SelectWeatherStation, LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String SHARED_PREFERENCES_NAME = "HW314_shared_preferences";
 
@@ -48,8 +50,9 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	public static final int US_STANDARD_UNITS = 10;
 	public static final int METRIC_UNITS = 20;
-	public static final String STATE_ACTIVE_UNITS = "ActiveUnits";
-	private int mActiveUnits;
+
+	// public static final String STATE_ACTIVE_UNITS = "ActiveUnits";
+	private int mDisplayUnits;
 
 	private static final String STARTING_ZIP_CODE = "98103";
 	public static final String STATE_ACTIVE_ZIP_CODE = "ActiveZipCode";
@@ -57,6 +60,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	private TextProgressBar pbLoadingIndicator;
 	private LinearLayout current_conditions_fragmentLinearLayout;
+	private LinearLayout forecast_fragmentLinearLayout;
 
 	private Cursor mActiveZipCodeCursor;
 	// private ZipCodesDatabaseHelper mZipcodesDatabase;
@@ -91,16 +95,20 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			if (savedInstanceState.containsKey(STATE_ACTIVE_STATION)) {
 				mActiveStation = savedInstanceState.getInt(STATE_ACTIVE_STATION);
 			}
-			if (savedInstanceState.containsKey(STATE_ACTIVE_UNITS)) {
-				mActiveUnits = savedInstanceState.getInt(STATE_ACTIVE_UNITS);
-			}
+			/*			if (savedInstanceState.containsKey(STATE_ACTIVE_UNITS)) {
+							mDisplayUnits = savedInstanceState.getInt(STATE_ACTIVE_UNITS);
+						}*/
 
 		} else {
 			SharedPreferences storedStates = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 			mActiveZipCode = storedStates.getString(STATE_ACTIVE_ZIP_CODE, STARTING_ZIP_CODE);
 			mActiveStation = storedStates.getInt(STATE_ACTIVE_STATION, STATION_1);
-			mActiveUnits = storedStates.getInt(STATE_ACTIVE_UNITS, US_STANDARD_UNITS);
+			// mDisplayUnits = storedStates.getInt(STATE_ACTIVE_UNITS, US_STANDARD_UNITS);
 		}
+
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		mDisplayUnits = Integer.parseInt(sharedPref.getString(SettingsFragment.KEY_DISPLAY_UNITS, ""));
 
 		tvSelectedLocation = (TextView) findViewById(R.id.tvSelectedLocation);
 		pbLoadingIndicator = (TextProgressBar) findViewById(R.id.pbLoadingIndicator);
@@ -169,6 +177,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 				);
 
 		current_conditions_fragmentLinearLayout = (LinearLayout) findViewById(R.id.current_conditions_fragment);
+		forecast_fragmentLinearLayout = (LinearLayout) findViewById(R.id.forcast_fragment);
 
 		// get the active zip code
 		refreshZipCodesCursor(mActiveZipCode);
@@ -198,7 +207,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	private void ReplaceCurrentConditonsFragment() {
 		String currentConditionsURL = getCurrentConditionsURL(mActiveStation);
-		mCurrentConditionsFragment = CurrentConditionsFragment.newInstance(currentConditionsURL, mActiveUnits);
+		mCurrentConditionsFragment = CurrentConditionsFragment.newInstance(currentConditionsURL);
 
 		getFragmentManager().beginTransaction()
 				.replace(R.id.current_conditions_fragment, mCurrentConditionsFragment, FRAGMENT_CURRENT_CONDITIONS)
@@ -229,7 +238,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	private void ReplaceForecastFragment() {
 		String weatherForecastURL = getWeatherForecastURL();
-		mForecastFragment = ForecastFragment.newInstance(weatherForecastURL, mActiveUnits);
+		mForecastFragment = ForecastFragment.newInstance(weatherForecastURL);
 
 		getFragmentManager().beginTransaction()
 				.replace(R.id.forcast_fragment, mForecastFragment, FRAGMENT_FORECAST)
@@ -246,7 +255,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 		sb.append(urlPart1);
 		sb.append(mActiveZipCode);
 		sb.append(urlPart2);
-		switch (mActiveUnits) {
+		switch (mDisplayUnits) {
 			case METRIC_UNITS:
 				sb.append("m");
 				break;
@@ -366,8 +375,13 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 				// Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
 				break;
 
-			case R.id.action_select_display_units:
-				Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
+			case R.id.action_settings:
+
+				// Start the Settings Activity
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+
+				// Toast.makeText(this, item.getTitle() + " is under construction.", Toast.LENGTH_SHORT).show();
 				break;
 
 			default:
@@ -388,7 +402,8 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			fragmentTransaction.remove(prev);
 		}
 		// Create and show the dialog.
-		SelectStationDialogFragment newFragment = SelectStationDialogFragment.newInstance(mActiveZipCode, mActiveUnits);
+		SelectStationDialogFragment newFragment = SelectStationDialogFragment
+				.newInstance(mActiveZipCode, mDisplayUnits);
 		newFragment.show(fragmentTransaction, "dialog_selectStation");
 
 	}
@@ -416,6 +431,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			txtZipCity.setVisibility(View.GONE);
 			lvZipCity.setVisibility(View.GONE);
 			current_conditions_fragmentLinearLayout.setVisibility(View.GONE);
+			forecast_fragmentLinearLayout.setVisibility(View.GONE);
 		}
 
 	}
@@ -428,6 +444,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			txtZipCity.setVisibility(View.GONE);
 			lvZipCity.setVisibility(View.GONE);
 			current_conditions_fragmentLinearLayout.setVisibility(View.VISIBLE);
+			forecast_fragmentLinearLayout.setVisibility(View.VISIBLE);
 		}
 
 	}
@@ -448,7 +465,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 		SharedPreferences.Editor storedStates = settings.edit();
 		storedStates.putString(STATE_ACTIVE_ZIP_CODE, mActiveZipCode);
 		storedStates.putInt(STATE_ACTIVE_STATION, mActiveStation);
-		storedStates.putInt(STATE_ACTIVE_UNITS, mActiveUnits);
+		// storedStates.putInt(STATE_ACTIVE_UNITS, mDisplayUnits);
 		storedStates.commit();
 		super.onPause();
 	}
@@ -464,7 +481,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putString(STATE_ACTIVE_ZIP_CODE, mActiveZipCode);
 		outState.putInt(STATE_ACTIVE_STATION, mActiveStation);
-		outState.putInt(STATE_ACTIVE_UNITS, mActiveUnits);
+		// outState.putInt(STATE_ACTIVE_UNITS, mDisplayUnits);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -493,6 +510,7 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 	@Override
 	public void onCurrentWeatherDownloadComplete(CurrentConditions currentConditions) {
+		MyLog.i("Main_ACTIVITY", "onCurrentWeatherDownloadComplete()");
 		currentConditionsLoadingComplete = true;
 		if (forecastLoadingComplete) {
 			DismissLoadingIndicator();
@@ -500,15 +518,18 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	}
 
 	@Override
+	public void onForecastWeatherDownloadComplete(WeatherForecast weatherForecast) {
+		MyLog.i("Main_ACTIVITY", "onForecastWeatherDownloadComplete()");
+		forecastLoadingComplete = true;
+		if (currentConditionsLoadingComplete) {
+			DismissLoadingIndicator();
+		}
+
+	}
+
+	@Override
 	public void onWeatherSationChange(int stationNumber) {
 		mActiveStation = stationNumber;
 		StartCurrentConditionsFragment();
 	}
-
-	@Override
-	public void onForecastWeatherDownloadComplete(ForecastWeatherPostExecute currentConditions) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

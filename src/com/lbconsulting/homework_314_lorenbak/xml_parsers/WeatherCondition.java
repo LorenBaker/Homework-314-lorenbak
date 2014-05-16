@@ -3,16 +3,16 @@ package com.lbconsulting.homework_314_lorenbak.xml_parsers;
 public class WeatherCondition {
 
 	// private String name = "";
-	private String coverage = "";
-	private String intensity = "";
-	private String weather_type = "";
-	private String qualifier = "";
+	private String coverage = "N/A";
+	private String intensity = "N/A";
+	private String weather_type = "N/A";
+	private String qualifier = "N/A";
 
 	private boolean hasAdditive = false;
-	private String coverage2 = "";
-	private String intensity2 = "";
-	private String weather_type2 = "";
-	private String qualifier2 = "";
+	private String coverage2 = "N/A";
+	private String intensity2 = "N/A";
+	private String weather_type2 = "N/A";
+	private String qualifier2 = "N/A";
 
 	private boolean isEmpty = true;
 
@@ -20,6 +20,23 @@ public class WeatherCondition {
 
 	}
 
+	// Weather conditions possible values:
+	// coverage = areas, chance, definitely, isolated, likely, none, numerous, occasional, patchy, scattered, slight
+	// chance, widespread
+
+	// intensity = heavy, light, moderate, none, very light
+
+	// weather-type = blowing dust, blowing sand, blowing snow, drizzle, fog, freezing drizzle, freezing fog, freezing
+	// rain, freezing spray,
+	// frost, hail, haze , ice crystals, ice fog, ice pellets, none, rain, rain shower, smoke, snow, snow shower,
+	// thunderstorms,
+	// volcanic ash, water spouts
+
+	// qualifier = damaging winds, dry, frequent lightning, gusty winds, heavy rain, highest ranking, include
+	// unconditionally, large hail,
+	// mixture, none, on bridges and overpasses, on grassy areas, or, outlying areas, small hail, tornado
+
+	// typical xml:
 	/*<value coverage="slight chance" intensity="light" weather-type="rain showers" qualifier="none">
 	        <visibility xsi:nil="true"/>
 	  </value>
@@ -27,6 +44,28 @@ public class WeatherCondition {
 	        <visibility xsi:nil="true"/>
 	  </value>
 		}*/
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (!isEmpty) {
+			if (!getIntensity().equals("none")) {
+				sb.append(getIntensity()).append(" ");
+			}
+			sb.append(getWeather_type());
+
+			if (hasAdditive) {
+				sb.append(" and ");
+				if (!getIntensity2().equals("none")) {
+					sb.append(getIntensity2()).append(" ");
+				}
+				sb.append(getWeather_type2());
+			}
+		} else {
+			sb.append("");
+		}
+		return sb.toString();
+	}
 
 	public boolean isEmpty() {
 		return isEmpty;

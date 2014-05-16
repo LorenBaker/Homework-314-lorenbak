@@ -1,0 +1,18 @@
+<resources>
+
+	<string name="action_settings">Settings</string>
+	<string name="title_activity_settings">Settings</string>
+
+	<!-- Example General settings -->
+	<string name="pref_title_display_untis">Display Units</string>
+
+	<string-array name="pref_display_units">
+		<item>US Standard</item>
+		<item>Metric</item>
+	</string-array>
+	<string-array name="pref_display_units_values">
+		<item>10</item>
+		<item>20</item>
+	</string-array>
+
+</resources>

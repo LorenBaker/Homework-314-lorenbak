@@ -11,6 +11,7 @@ public class ConditionIcons {
 	private String type = "";
 	private String timeLayoutKey = "";
 	private ArrayList<String> iconLinks = new ArrayList<String>();
+	private ArrayList<String> icons = new ArrayList<String>();
 
 	public ConditionIcons(String timeLayoutKey) {
 		this.timeLayoutKey = timeLayoutKey;
@@ -46,5 +47,13 @@ public class ConditionIcons {
 
 	public String getIconLink(int index) {
 		return iconLinks.get(index);
+	}
+
+	public ArrayList<String> getIcons() {
+		return icons;
+	}
+
+	public String getIcon(int index) {
+		return icons.get(index);
 	}
 }
