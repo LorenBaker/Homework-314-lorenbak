@@ -45,21 +45,28 @@
 	</LinearLayout>
 
 	<LinearLayout
-		android:id="@+id/current_conditions_fragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="7"
-		android:background="@drawable/rectangle_green_gradient_black_stroke"
-		android:orientation="vertical" >
-	</LinearLayout>
+		android:layout_weight="1"
+		android:orientation="horizontal" >
 
-	<LinearLayout
-		android:id="@+id/forcast_fragment"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="13"
-		android:background="@drawable/rectangle_green_gradient_black_stroke"
-		android:orientation="vertical" >
+		<LinearLayout
+			android:id="@+id/current_conditions_fragment"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="7"
+			android:background="@drawable/rectangle_green_gradient_black_stroke"
+			android:orientation="vertical" >
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/forcast_fragment"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="13"
+			android:background="@drawable/rectangle_green_gradient_black_stroke"
+			android:orientation="vertical" >
+		</LinearLayout>
 	</LinearLayout>
 
 	<com.lbconsulting.homework_314_lorenbak.misc.TextProgressBar

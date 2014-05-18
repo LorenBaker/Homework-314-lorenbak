@@ -3,14 +3,15 @@
 	android:id="@+id/llCurrentConditions"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical" >
+	android:orientation="vertical"
+	android:padding="3dp" >
 
 	<TextView
 		android:id="@+id/tvCurrentConditions"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="left"
-		android:padding="3dp"
+		android:padding="1dp"
 		android:textSize="15sp"
 		android:textStyle="bold"
 		android:visibility="visible" />

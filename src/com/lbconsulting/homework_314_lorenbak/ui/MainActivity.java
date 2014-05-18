@@ -51,7 +51,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	public static final int US_STANDARD_UNITS = 10;
 	public static final int METRIC_UNITS = 20;
 
-	// public static final String STATE_ACTIVE_UNITS = "ActiveUnits";
 	private int mDisplayUnits;
 
 	private static final String STARTING_ZIP_CODE = "98103";
@@ -63,7 +62,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	private LinearLayout forecast_fragmentLinearLayout;
 
 	private Cursor mActiveZipCodeCursor;
-	// private ZipCodesDatabaseHelper mZipcodesDatabase;
 
 	private static final String FRAGMENT_CURRENT_CONDITIONS = "frag_current_conditions";
 	private CurrentConditionsFragment mCurrentConditionsFragment;
@@ -103,7 +101,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			SharedPreferences storedStates = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 			mActiveZipCode = storedStates.getString(STATE_ACTIVE_ZIP_CODE, STARTING_ZIP_CODE);
 			mActiveStation = storedStates.getInt(STATE_ACTIVE_STATION, STATION_1);
-			// mDisplayUnits = storedStates.getInt(STATE_ACTIVE_UNITS, US_STANDARD_UNITS);
 		}
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
@@ -116,22 +113,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			pbLoadingIndicator.setText("Downloading Weather");
 		}
 		txtZipCity = (EditText) findViewById(R.id.txtZipCity);
-		// setup txtZipCity Listeners
-		/*		txtZipCity.setOnKeyListener(new OnKeyListener() {
-
-					@Override
-					public boolean onKey(View v, int keyCode, KeyEvent event) {
-						boolean result = false;
-						if ((event.getAction() == KeyEvent.ACTION_DOWN)
-								&& (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.FLAG_EDITOR_ACTION || keyCode == KeyEvent.KEYCODE_DPAD_CENTER)) {
-							// TODO: select zip code to show
-							// SelectItemForList();
-							result = true;
-						}
-						return result;
-					}
-
-				});*/
 
 		txtZipCity.addTextChangedListener(new TextWatcher() {
 
@@ -146,20 +127,13 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				/*MyLog.i("Main_ACTIVITY", "onCreate; txtZipCity.beforeTextChanged -- "
-						+ txtZipCity.getText().toString());*/
 				// Do nothing
-
 			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				/*MyLog.i("Main_ACTIVITY", "onCreate; txtZipCity.onTextChanged -- "
-						+ txtZipCity.getText().toString());*/
 				// Do nothing
-
 			}
-
 		});
 
 		lvZipCity = (ListView) findViewById(R.id.lvZipCity);
@@ -223,17 +197,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	private void StartForecastFragment() {
 		forecastLoadingComplete = false;
 		ReplaceForecastFragment();
-		// HideTextEntryBoxAndList();
-		// ShowLoadingIndicator();
-		/*		if (mForecastFragment != null) {
-					AsyncTask.Status status = mCurrentConditionsFragment.getLoadingCurrentWeatherConditionsStatus();
-					if (status == AsyncTask.Status.FINISHED) {
-						ReplaceCurrentConditonsFragment();
-					}
-				} else {
-					ReplaceCurrentConditonsFragment();
-				}*/
-
 	}
 
 	private void ReplaceForecastFragment() {
@@ -269,7 +232,9 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	}
 
 	private void RemoveForecastFragment() {
-		// TODO Auto-generated method stub
+		getFragmentManager().beginTransaction()
+				.remove(mForecastFragment)
+				.commit();
 
 	}
 
@@ -433,7 +398,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			current_conditions_fragmentLinearLayout.setVisibility(View.GONE);
 			forecast_fragmentLinearLayout.setVisibility(View.GONE);
 		}
-
 	}
 
 	public void DismissLoadingIndicator() {
@@ -446,7 +410,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 			current_conditions_fragmentLinearLayout.setVisibility(View.VISIBLE);
 			forecast_fragmentLinearLayout.setVisibility(View.VISIBLE);
 		}
-
 	}
 
 	@Override
@@ -465,7 +428,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 		SharedPreferences.Editor storedStates = settings.edit();
 		storedStates.putString(STATE_ACTIVE_ZIP_CODE, mActiveZipCode);
 		storedStates.putInt(STATE_ACTIVE_STATION, mActiveStation);
-		// storedStates.putInt(STATE_ACTIVE_UNITS, mDisplayUnits);
 		storedStates.commit();
 		super.onPause();
 	}
@@ -481,7 +443,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putString(STATE_ACTIVE_ZIP_CODE, mActiveZipCode);
 		outState.putInt(STATE_ACTIVE_STATION, mActiveStation);
-		// outState.putInt(STATE_ACTIVE_UNITS, mDisplayUnits);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -524,7 +485,6 @@ public class MainActivity extends Activity implements CurrentCondtionsPostExecut
 		if (currentConditionsLoadingComplete) {
 			DismissLoadingIndicator();
 		}
-
 	}
 
 	@Override

@@ -40,9 +40,7 @@ public class WeatherForecast_Parser {
 			parser.nextTag();
 			skip(parser);
 			parser.nextTag();
-			/*int event = parser.getEventType();
-			String name = parser.getName();
-			*/
+
 			if (parser.getName().equals(WeatherForecast.TAG_DATA)) {
 				weatherForecast = new WeatherForecast();
 				readFeed(parser);
@@ -117,13 +115,6 @@ public class WeatherForecast_Parser {
 				String locationKey = readText(parser);
 
 				parser.next();
-				/*				name = parser.getName();
-								event = parser.getEventType();*/
-
-				// parser.next();
-
-				/*				name = parser.getName();
-								event = parser.getEventType();*/
 
 			} else if (name.equals(WeatherForecast.TAG_POINT)) {
 				HashMap<String, String> pointAttributes = getAttributes(parser);
@@ -131,15 +122,11 @@ public class WeatherForecast_Parser {
 				weatherForecast.setLongitude(pointAttributes.get("longitude"));
 
 				parser.next();
-				/*				name = parser.getName();
-								event = parser.getEventType();*/
 
 			} else {
 				skip(parser);
 			}
-
 		}
-
 	}
 
 	private static void parseTimeLayout(XmlPullParser parser) throws XmlPullParserException, IOException,
@@ -315,29 +302,16 @@ public class WeatherForecast_Parser {
 					condition.setQualifier(conditionAttributes.get("qualifier"));
 					condition.setWeather_type(conditionAttributes.get("weather-type"));
 				}
-				// parser.next();
-				// name = parser.getName();
-				// event = parser.getEventType();
 
 			} else if (name.equals(tagVisibility)) {
 				HashMap<String, String> visibilityAttributes = getAttributes(parser);
-				// name = parser.getName();
 
 				event = parser.next();
-				// name = parser.getName();
-
 				event = parser.next();
-				// name = parser.getName();
-
 				event = parser.next();
-				// name = parser.getName();
-
 				event = parser.next();
-				// name = parser.getName();
-
 			} else {
 				skip(parser);
-				// parser.next();
 			}
 		}
 

@@ -72,7 +72,6 @@ public class ForecastFragment extends Fragment {
 		ForecastFragment f = new ForecastFragment();
 		Bundle args = new Bundle();
 		args.putString(FORECAST_WEATHER_URL, forecastWeatherURL);
-		// args.putInt(MainActivity.STATE_ACTIVE_UNITS, displayUnits);
 		f.setArguments(args);
 		return f;
 	}
@@ -105,15 +104,10 @@ public class ForecastFragment extends Fragment {
 				mForecastConditionsURL = savedInstanceState.getString(FORECAST_WEATHER_URL);
 			}
 
-			/*			if (savedInstanceState.containsKey(MainActivity.STATE_ACTIVE_UNITS)) {
-							mDisplayUnits = savedInstanceState.getInt(MainActivity.STATE_ACTIVE_UNITS);
-						}*/
-
 		} else {
 			Bundle bundle = getArguments();
 			if (bundle != null) {
 				mForecastConditionsURL = bundle.getString(FORECAST_WEATHER_URL);
-				// mDisplayUnits = bundle.getInt(MainActivity.STATE_ACTIVE_UNITS, MainActivity.US_STANDARD_UNITS);
 			}
 		}
 
@@ -133,34 +127,6 @@ public class ForecastFragment extends Fragment {
 		MyLog.i("ForecastFragment", "onActivityCreated()");
 
 		mDiskCache = new DiskLruImageCache(getActivity(), DISK_CACH_DIRECTORY, DISK_CACHE_SIZE, CompressFormat.PNG, 80);
-
-		/*String dataFilename = "WeatherForecast.xml";*/
-
-		/*		if (dataFilename != null && !dataFilename.isEmpty()) {
-					AssetManager assetManager = getActivity().getAssets();
-					if (assetManager != null) {
-						InputStream weatherForecastFeedStream = null;
-						try {
-							weatherForecastFeedStream = assetManager.open(dataFilename);
-							if (weatherForecastFeedStream != null) {
-								WeatherForecast weatherForecast = WeatherForecast_Parser.parse(weatherForecastFeedStream);
-								weatherForecastFeedStream.close();
-							}
-						} catch (IOException e) {
-							MyLog.e("Titles_ACTIVITY",
-									"RefreshArticles(): IOException opening " + dataFilename + "\n" + e.toString());
-
-						} catch (XmlPullParserException e) {
-							MyLog.e("Titles_ACTIVITY", "RefreshArticles(): XmlPullParserException parsing "
-									+ dataFilename
-									+ "\n" + e.toString());
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}*/
-
 		String[] args = new String[] { mForecastConditionsURL, String.valueOf(mDisplayUnits) };
 		mLoadForecastWeatherConditions = (LoadForecastWeatherConditions) new LoadForecastWeatherConditions()
 				.execute(args);
@@ -189,7 +155,6 @@ public class ForecastFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		MyLog.i("ForecastFragment", "onSaveInstanceState()");
 		outState.putString(FORECAST_WEATHER_URL, mForecastConditionsURL);
-		// outState.putInt(MainActivity.STATE_ACTIVE_UNITS, mDisplayUnits);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -223,10 +188,6 @@ public class ForecastFragment extends Fragment {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			/*			if (weatherForecast != null && weatherForecast.getIcon_url_name() != null
-								&& !currentConditions.getIcon_url_name().isEmpty()) {
-							getForecastConditionsBitmap(currentConditions);
-						}*/
 
 			return mWeatherForecast;
 		}
@@ -317,7 +278,6 @@ public class ForecastFragment extends Fragment {
 		protected void onPostExecute(WeatherForecast weatherForecast) {
 			MyLog.i("ForecastFragment", "onPostExecute(): Loading current weather conditions FINISHED.");
 			if (weatherForecast != null) {
-				// ShowForecastWeather(weatherForecast, activeUnits);
 				mForecastGridViewAdapter.setWeatherForecastData(mWeatherForecastData);
 				mForecastGridViewAdapter.notifyDataSetChanged();
 				mForecastWeatherPostExecuteCallback.onForecastWeatherDownloadComplete(weatherForecast);
@@ -386,9 +346,6 @@ public class ForecastFragment extends Fragment {
 				day_three_hour_time_layout_indexes.add(three_hour_time_layout_index);
 				three_hour_time_layout_index = nextNightThreeHourTimeLayoutIndex(three_hour_time_layout_index);
 				night_three_hour_time_layout_indexes.add(three_hour_time_layout_index);
-
-				/*	long startTime;
-					long endTime;*/
 
 				String day_period_name;
 				String night_period_name;
@@ -607,73 +564,6 @@ public class ForecastFragment extends Fragment {
 			}
 			return resultIndex;
 		}
-
-		/*		private ArrayList<Integer> findValidThreeHourTimeLayoutIndexes(long startTime, long endTime) {
-					ArrayList<Integer> resultIndexes = new ArrayList<Integer>();
-					int index = 0;
-					if (mWeatherForecast != null) {
-						int threeHourTimeLayoutSize = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT)
-								.getStartTimes().size();
-						long time = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT)
-								.getStartTime(index).getTimeInMillis();
-
-						while (index < threeHourTimeLayoutSize) {
-							if (time >= startTime && time <= endTime) {
-								// time is within the startTime and endTime range
-								resultIndexes.add(index);
-							}
-
-							index++;
-							if (index < threeHourTimeLayoutSize) {
-								time = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT)
-										.getStartTime(index).getTimeInMillis();
-							}
-						}
-					}
-
-					return resultIndexes;
-				}*/
-
-		/*		private int chooseThreeHourTimeLayoutIndex(ArrayList<Integer> indexes) {
-					// return the index that is latest in time.
-					int resultIndex = 0;
-					if (indexes.size() > 0) {
-						int i = indexes.size() - 1;
-						while (i > 0) {
-							resultIndex = indexes.get(i);
-							if (!mWeatherForecast.getWeather().getConditions(resultIndex).isEmpty()) {
-								break;
-							}
-							i--;
-						}
-
-					}
-
-					return resultIndex;
-				}*/
-
-		/*		private int findThreeHourTimeLayoutIndex(long soughtTime) {
-					int resultIndex = 0;
-					if (mWeatherForecast != null) {
-						// long timeTarget = mWeatherForecast.getTimeLayout(timeLayout).getEndTime(0).getTimeInMillis();
-						long time = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT).getStartTime(resultIndex)
-								.getTimeInMillis();
-
-						int threeHourTimeLayoutSize = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT).getStartTimes()
-								.size();
-
-						while (time <= soughtTime && resultIndex < threeHourTimeLayoutSize) {
-							resultIndex++;
-							time = mWeatherForecast.getTimeLayout(THREE_HOUR_TIME_LAYOUT).getStartTime(resultIndex)
-									.getTimeInMillis();
-						}
-						if (resultIndex > 0) {
-							resultIndex--;
-						}
-					}
-
-					return resultIndex;
-				}*/
 
 		public AsyncTask.Status getLoadingForecastWeatherConditionsStatus() {
 

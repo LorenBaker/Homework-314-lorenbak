@@ -73,7 +73,6 @@ public class CurrentConditionsFragment extends Fragment {
 		// Supply activeChannelID input as an argument.
 		Bundle args = new Bundle();
 		args.putString(STATE_CURRENT_CONDITIONS_URL, currentConditionsURL);
-		// args.putInt(MainActivity.STATE_ACTIVE_UNITS, displayUnits);
 		f.setArguments(args);
 		return f;
 	}
@@ -106,15 +105,10 @@ public class CurrentConditionsFragment extends Fragment {
 				mCurrentConditionsURL = savedInstanceState.getString(STATE_CURRENT_CONDITIONS_URL);
 			}
 
-			/*			if (savedInstanceState.containsKey(MainActivity.STATE_ACTIVE_UNITS)) {
-							mDisplayUnits = savedInstanceState.getInt(MainActivity.STATE_ACTIVE_UNITS);
-						}*/
-
 		} else {
 			Bundle bundle = getArguments();
 			if (bundle != null) {
 				mCurrentConditionsURL = bundle.getString(STATE_CURRENT_CONDITIONS_URL);
-				// mDisplayUnits = bundle.getInt(MainActivity.STATE_ACTIVE_UNITS, MainActivity.US_STANDARD_UNITS);
 			}
 		}
 
@@ -167,7 +161,6 @@ public class CurrentConditionsFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		MyLog.i("CurrentConditionsFragment", "onSaveInstanceState()");
 		outState.putString(STATE_CURRENT_CONDITIONS_URL, mCurrentConditionsURL);
-		// outState.putInt(MainActivity.STATE_ACTIVE_UNITS, mDisplayUnits);
 		super.onSaveInstanceState(outState);
 	}
 

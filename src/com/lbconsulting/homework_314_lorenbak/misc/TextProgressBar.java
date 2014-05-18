@@ -15,8 +15,8 @@ public class TextProgressBar extends ProgressBar {
 	private int textColor = Color.BLACK;
 	private int textSize_px = 50;
 	private int textSize_dp = 15;
-	private int textPaddingLeft_dp = 2;
-	private int textPaddingLeftPlusRight_px = 2;
+	private int textPaddingLeft_dp = 5;
+	private int textPaddingLeftPlusRight_px = 5;
 	private boolean flag_isFirstTime = true;
 
 	private Context mContext;

@@ -15,23 +15,23 @@
 		<TextView
 			android:id="@+id/tvSelectedLocation"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="56dp"
 			android:background="@drawable/rectangle_green_gradient_black_stroke"
 			android:gravity="center"
-			android:padding="3dp"
+			android:padding="6dp"
 			android:textColor="@color/white"
-			android:textSize="17sp"
+			android:textSize="26sp"
 			android:textStyle="bold"
 			android:visibility="visible" />
 
 		<EditText
 			android:id="@+id/txtZipCity"
 			android:layout_width="match_parent"
-			android:layout_height="48dp"
+			android:layout_height="56dp"
 			android:background="@drawable/rectangle_black_stroke"
 			android:hint="@string/txt_zip_city_hint"
 			android:inputType="textCapWords"
-			android:paddingLeft="3dp"
+			android:paddingLeft="8dp"
 			android:visibility="gone" >
 		</EditText>
 
@@ -45,27 +45,34 @@
 	</LinearLayout>
 
 	<LinearLayout
-		android:id="@+id/current_conditions_fragment"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="7"
-		android:background="@drawable/rectangle_green_gradient_black_stroke"
-		android:orientation="vertical" >
-	</LinearLayout>
+		android:layout_weight="1"
+		android:orientation="horizontal" >
 
-	<LinearLayout
-		android:id="@+id/forcast_fragment"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="13"
-		android:background="@drawable/rectangle_green_gradient_black_stroke"
-		android:orientation="vertical" >
+		<LinearLayout
+			android:id="@+id/current_conditions_fragment"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="7"
+			android:background="@drawable/rectangle_green_gradient_black_stroke"
+			android:orientation="vertical" >
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/forcast_fragment"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="13"
+			android:background="@drawable/rectangle_green_gradient_black_stroke"
+			android:orientation="vertical" >
+		</LinearLayout>
 	</LinearLayout>
 
 	<com.lbconsulting.homework_314_lorenbak.misc.TextProgressBar
 		android:id="@+id/pbLoadingIndicator"
-		android:layout_width="150dp"
-		android:layout_height="150dp"
+		android:layout_width="250dp"
+		android:layout_height="250dp"
 		android:layout_gravity="center"
 		android:background="@drawable/rectangle_green_gradient_black_stroke"
 		android:indeterminateOnly="true"
